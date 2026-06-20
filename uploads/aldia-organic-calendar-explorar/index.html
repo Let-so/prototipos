@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AlDía — Tu bienestar, tu información, tu decisión. Prototipo persona-céntrico." />
+  <meta name="theme-color" content="#F5F2ED" />
+  <title>AlDía</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Marco de teléfono que contiene la app -->
+  <div class="phone" id="phone">
+    <!-- Status bar mock de iOS -->
+    <div class="statusbar">
+      <span class="statusbar__time">9:41</span>
+      <span class="statusbar__icons" aria-hidden="true">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+        <svg width="18" height="13" viewBox="0 0 18 13" fill="currentColor"><path d="M9 2.5c2.3 0 4.4.9 6 2.4l1.4-1.5A11 11 0 0 0 9 .5 11 11 0 0 0 1.6 3.4L3 4.9A8.6 8.6 0 0 1 9 2.5Zm0 4c1.2 0 2.3.5 3.1 1.3l1.4-1.5A7 7 0 0 0 9 4.5a7 7 0 0 0-4.5 1.8l1.4 1.5A4.6 4.6 0 0 1 9 6.5Zm0 4c.6 0 1.1.2 1.5.7L9 13l-1.5-1.8c.4-.5.9-.7 1.5-.7Z"/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3" stroke="currentColor"/><rect x="2" y="2" width="18" height="9" rx="1.5" fill="currentColor"/><rect x="24" y="4" width="2" height="5" rx="1" fill="currentColor"/></svg>
+      </span>
+    </div>
+
+    <!-- Aquí se inyecta la pantalla activa -->
+    <main class="screen" id="screen" tabindex="-1"></main>
+
+    <!-- Bottom navigation (se muestra/oculta según la pantalla) -->
+    <nav class="tabbar" id="tabbar" aria-label="Navegación principal"></nav>
+  </div>
+
+  <!-- Capa de modales / bottom sheets / tutoriales -->
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- Selector de pantallas para demo (fuera del teléfono) -->
+  <aside class="navigator" id="navigator" aria-label="Mapa de pantallas">
+    <h2 class="navigator__title">Pantallas</h2>
+    <div class="navigator__list" id="navigatorList"></div>
+  </aside>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

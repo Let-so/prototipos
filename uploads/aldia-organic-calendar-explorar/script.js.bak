@@ -1,0 +1,1129 @@
+/* ============================================================
+   AlDía — App vanilla (router + pantallas + datos mock)
+   Principios: la persona es el centro · sin métricas/scores/alertas
+   ============================================================ */
+
+/* ---------------- Íconos (estilo línea, lucide-like) ---------------- */
+const I = {
+  menu: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  search: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  back: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  dots: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>',
+  chevron: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  arrow: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>',
+  close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  home: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  history: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 9h6M8 13h8M8 17h5"/></svg>',
+  share: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>',
+  more: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  plus: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  mic: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>',
+  pencil: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  pills: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="13" height="6" rx="3" transform="rotate(-45 8.5 12)"/><path d="m8.5 8.5 7 7"/></svg>',
+  doc: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>',
+  calendar: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  heart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg>',
+  camera: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L19 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  bookmark: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+  play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  stop: '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
+  moon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>',
+  wave: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12h2l2-6 4 14 4-18 2 10h6"/></svg>',
+  sparkle: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg>',
+  lock: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  folder: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v6M9 14l3 3 3-3"/></svg>',
+  clock: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  shield: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4 3 6.5 7 9 4-2.5 7-5 7-9V6z"/></svg>',
+  hand: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0M14 7V4a2 2 0 0 0-4 0v2M10 6a2 2 0 0 0-4 0v8M6 14l-1.5-1.5a2 2 0 0 0-3 3L6 21h8a4 4 0 0 0 4-4v-3"/></svg>',
+  download: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 4 5-4M5 21h14"/></svg>',
+  trash: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M5 6l1 14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-14"/></svg>',
+  bell: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  gear: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H1a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 2.6 7a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 7 2.6h.1A1.6 1.6 0 0 0 8.2 1.1V1a2 2 0 0 1 4 0v.1A1.6 1.6 0 0 0 15 2.6a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.1a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.4 1z"/></svg>',
+  user: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  key: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="5"/><path d="m11.5 11.5 8-8M17 5l2 2M14 8l2 2"/></svg>',
+  eye: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+  infinity: '<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 12c0-2 1.5-3.5 3-3.5S16 12 17 12s2.5 1.5 2.5 3.5S18 19 16.5 19 8 12 7 12s-2.5 1.5-2.5 3.5S6 19 7.5 19 17 12 17 12s1.5-3.5 3-3.5"/></svg>',
+};
+
+/* ---------------- Datos mock (español, realistas) ---------------- */
+const PEOPLE = [
+  { id: "sofia", initials: "SL", name: "Sofía Laguarda", last: "Hoy, 08:32", next: "28 MAY · 11:30 hs", color: "blue" },
+  { id: "martin", initials: "MT", name: "Martín Torres", last: "Ayer, 21:15", next: "30 MAY · 18:00 hs", color: "butter" },
+  { id: "paula", initials: "PF", name: "Paula Fernández", last: "26 may, 19:42", next: "2 JUN · 09:00 hs", color: "lilac" },
+  { id: "lucia", initials: "LC", name: "Lucía Conti", last: "24 may, 10:12", next: null, color: "peach" },
+];
+
+const TIMELINE = [
+  { day: "HOY, 28 DE MAYO", items: [
+    { time: "08:32", icon: "heart", type: "Estado emocional", text: "Gracias a la respiración pude volver a centrarme.", blob: "blue" },
+    { time: "07:45", icon: "moon", type: "Sueño", text: "Dormí 7 hs 10 min.", blob: "lilac" },
+  ]},
+  { day: "AYER, 27 DE MAYO", items: [
+    { time: "21:15", icon: "pencil", type: "Nota personal", text: "Hoy me sentí ansiosa por varias cosas, pero hablé con alguien y me ayudó.", blob: "peach" },
+    { time: "19:30", icon: "wave", type: "Medicación", text: "12 min · Respiración consciente.", blob: "butter" },
+  ]},
+];
+
+const AUDIOS = [
+  { title: "Reflexión nocturna", dur: "02:15", date: "Hoy, 01:33" },
+  { title: "Ansiedad y respiración", dur: "01:43", date: "Ayer, 22:10" },
+  { title: "Nota de voz", dur: "00:51", date: "26 may, 09:20" },
+];
+
+const DOCS = [
+  { icon: "doc", title: "Análisis de sangre", meta: "28 may 2024 · Laboratorio Central", color: "blue" },
+  { icon: "doc", title: "Informe de consulta", meta: "26 may 2024 · Dra. Laguarda", color: "lilac" },
+  { icon: "doc", title: "Receta", meta: "20 may 2024 · Dra. Laguarda", color: "butter" },
+];
+
+const MED_HISTORY = [
+  { day: "MAYO 2024", items: [
+    { icon: "calendar", type: "Consulta", title: "Consulta con Dra. Sofía Laguarda", date: "28 de mayo, 11:30 hs", dot: "var(--brand)" },
+    { icon: "doc", type: "Estudio", title: "Resonancia magnética de columna", date: "12 de mayo", dot: "var(--butter)" },
+    { icon: "pencil", type: "Nota", title: "Sobre cómo me sentí", date: "3 de mayo", dot: "var(--green)" },
+  ]},
+];
+
+/* ---------------- Estado y router ---------------- */
+const app = {
+  screen: document.getElementById("screen"),
+  tabbar: document.getElementById("tabbar"),
+  overlay: document.getElementById("overlay"),
+  navList: document.getElementById("navigatorList"),
+  current: null,
+  activeTab: "inicio",
+  tutStep: 0,
+};
+
+const ROUTES = {}; // se llena más abajo
+
+function go(route, opts = {}) {
+  const fn = ROUTES[route];
+  if (!fn) return;
+  app.current = route;
+  app.screen.scrollTop = 0;
+  app.screen.innerHTML = fn(opts);
+  app.screen.classList.toggle("has-tabbar", !!TAB_SCREENS[route]);
+  renderTabbar(route);
+  bindScreen();
+  updateNavigator();
+}
+
+/* Pantallas que muestran bottom nav y su tab activo */
+const TAB_SCREENS = {
+  home: "inicio", historia: "historia", compartido: "compartido", mas: "mas",
+  panel: "inicio", configuracion: "mas", privacidad: "mas", exportar: "mas",
+  historial: "mas", medicaciones: "historia", documentos: "historia",
+  consultas: "historia", resumen: "historia", explorar: "compartido",
+  masOpciones: "mas", personaResumen: "inicio", personaTimeline: "inicio",
+  personaAudios: "inicio", personaDocs: "inicio", personaNotas: "inicio",
+};
+
+/* ---------------- Helpers de render ---------------- */
+const blobBg = (color) => `<span class="avatar__blob blob--${color}"></span>`;
+
+function aurora(blobs) {
+  return `<div class="aurora">${blobs.map(b =>
+    `<span class="blob blob--${b.c}" style="width:${b.s}px;height:${b.s}px;left:${b.x};top:${b.y}"></span>`
+  ).join("")}</div>`;
+}
+
+function topbar({ left = "", title = "", right = "" }) {
+  return `<header class="topbar"><div>${left}</div><div class="topbar__title">${title}</div><div>${right}</div></header>`;
+}
+
+/* ============================================================
+   PANTALLAS — Onboarding (P1)
+   ============================================================ */
+ROUTES.welcome = () => `
+  ${aurora([{c:"blue",s:240,x:"-40px",y:"60px"},{c:"butter",s:220,x:"60%",y:"-20px"},{c:"lilac",s:180,x:"40%",y:"50%"}])}
+  <div class="welcome">
+    <div class="welcome__center">
+      <div class="brand-logo">
+        <span class="brand-logo__mark">${I.infinity}</span>
+        <span class="brand-logo__text">AlDía</span>
+      </div>
+    </div>
+    <div class="welcome__footer stack">
+      <button class="btn btn--ghost flex items-center justify-between" data-go="role" style="border:1px solid var(--border);background:var(--surface)">Empezar ${I.arrow}</button>
+      <button class="link center" style="display:block;width:100%" data-go="login">Ya tengo una cuenta</button>
+    </div>
+  </div>`;
+
+ROUTES.role = () => `
+  ${aurora([{c:"butter",s:200,x:"-30px",y:"40px"},{c:"lilac",s:200,x:"55%",y:"60%"}])}
+  ${topbar({ left: `<button class="iconbtn" data-go="welcome" aria-label="Volver">${I.back}</button>` })}
+  <div class="content">
+    <h1 class="h1 mb-24">¿Cómo querés entrar?</h1>
+    <button class="gcard g-butter stack" data-go="register" style="display:block;width:100%;text-align:left;border:none;cursor:pointer;margin-bottom:16px">
+      <div class="flex items-center justify-between"><h2 class="h2">Soy paciente</h2>${I.arrow}</div>
+      <p class="lead" style="color:#5a4a30">Para guardar y organizar tu historia.</p>
+    </button>
+    <button class="gcard g-lilac stack" data-go="panel" style="display:block;width:100%;text-align:left;border:none;cursor:pointer">
+      <div class="flex items-center justify-between"><h2 class="h2">Soy médica</h2>${I.arrow}</div>
+      <p class="lead" style="color:#4a3a60">Para acompañar personas que compartan su historia con vos.</p>
+    </button>
+  </div>`;
+
+ROUTES.register = () => `
+  ${topbar({ left: `<button class="iconbtn" data-go="role" aria-label="Volver">${I.back}</button>` })}
+  <div class="content">
+    <h1 class="h1 mb-24">Crear cuenta</h1>
+    <div class="field"><label for="r-name">Nombre</label><input class="input" id="r-name" type="text" placeholder="Tu nombre"></div>
+    <div class="field"><label for="r-email">Email</label><input class="input" id="r-email" type="email" placeholder="tu@email.com"></div>
+    <div class="field"><label for="r-pass">Contraseña</label>
+      <div class="field__wrap"><input class="input input--icon" id="r-pass" type="password" placeholder="••••••••">
+      <button class="field__eye" data-eye="r-pass" aria-label="Mostrar contraseña">${I.eye}</button></div></div>
+    <div class="field"><label for="r-pass2">Confirmar contraseña</label>
+      <div class="field__wrap"><input class="input input--icon" id="r-pass2" type="password" placeholder="••••••••">
+      <button class="field__eye" data-eye="r-pass2" aria-label="Mostrar contraseña">${I.eye}</button></div></div>
+    <button class="btn btn--primary mt-8" data-go="home">Crear cuenta</button>
+    <div class="divider">o continuar con</div>
+    <div class="social-row">
+      <button class="social-btn" data-go="home"><span style="font-weight:700;color:#4285F4">G</span> Google</button>
+      <button class="social-btn" data-go="home"><span style="font-weight:700"></span> Apple</button>
+    </div>
+    <p class="center mt-24 muted" style="font-size:14px">¿Ya tenés cuenta? <button class="link link--brand" data-go="login">Iniciar sesión</button></p>
+  </div>`;
+
+ROUTES.login = () => `
+  ${topbar({ left: `<button class="iconbtn" data-go="welcome" aria-label="Volver">${I.back}</button>` })}
+  <div class="content">
+    <h1 class="h1 mb-24">Iniciar sesión</h1>
+    <div class="field"><label for="l-email">Email</label><input class="input" id="l-email" type="email" placeholder="tu@email.com"></div>
+    <div class="field"><label for="l-pass">Contraseña</label>
+      <div class="field__wrap"><input class="input input--icon" id="l-pass" type="password" placeholder="••••••••">
+      <button class="field__eye" data-eye="l-pass" aria-label="Mostrar contraseña">${I.eye}</button></div></div>
+    <button class="btn btn--primary mt-8" data-go="home">Entrar</button>
+    <div class="divider">o continuar con</div>
+    <div class="social-row">
+      <button class="social-btn" data-go="home"><span style="font-weight:700;color:#4285F4">G</span> Google</button>
+      <button class="social-btn" data-go="home">Apple</button>
+    </div>
+    <p class="center mt-24 muted" style="font-size:14px">¿No tenés cuenta? <button class="link link--brand" data-go="register">Crear cuenta</button></p>
+  </div>`;
+
+/* ============================================================
+   PANTALLAS — Paciente: Home (P2)
+   ============================================================ */
+ROUTES.home = () => `
+  <div class="content">
+    <div class="home-head">
+      <div>
+        <h1 class="h1">Hola, Martina.</h1>
+        <p class="section-title mt-8" style="margin-bottom:0">Hoy, 28 de mayo</p>
+      </div>
+      <button class="home-avatar" data-go="mas" aria-label="Tu perfil">${I.user}</button>
+    </div>
+
+    <p class="meaning-kicker">Una vida llena de <em>sentido</em></p>
+    <div class="meaning-orb" role="img" aria-label="Tu bienestar de hoy">
+      <div class="meaning-orb__bumps">
+        ${MEANING_POINTS.map((p, i) => `<span class="meaning-orb__bump meaning-orb__bump--${(i % 4) + 1}" style="left:${p.bx}%;top:${p.by}%;width:${p.bs}px;height:${p.bs}px"></span>`).join("")}
+      </div>
+      <div class="meaning-orb__core"></div>
+      ${MEANING_POINTS.map(p => `<span class="meaning-orb__label" style="left:${p.x}%;top:${p.y}%">${p.label}</span>`).join("")}
+    </div>
+
+    <h2 class="section-title mt-24">Últimos registros</h2>
+    <div class="flow-list mb-24">
+      ${eventRow({icon:"heart", title:"Estado emocional", sub:"Hoy, 08:32", dot:"var(--brand)", glow:"blue"})}
+      ${eventRow({icon:"moon", title:"Sueño · 7 hs 10 min", sub:"Hoy, 07:45", dot:"var(--lilac)", glow:"lilac"})}
+      ${eventRow({icon:"pencil", title:"Nota personal", sub:"Ayer, 21:15", dot:"var(--green)", glow:"green"})}
+    </div>
+
+    <h2 class="section-title">Próximo</h2>
+    <button class="flow-card flow-card--blue" data-go="consultas" style="display:block;width:100%;text-align:left;border:none;cursor:pointer">
+      <p style="font-size:13px;color:#2c3e66;font-weight:600">PRÓXIMA CONSULTA</p>
+      <p class="h2 mt-8" style="color:#1c2c52">28 MAY · 11:30 hs</p>
+      <p class="mt-8" style="color:#3a4a6a;font-size:14px">Dra. Sofía Laguarda · Clínica del Foro</p>
+    </button>
+  </div>`;
+
+/* "Una vida llena de sentido": 8 etiquetas distribuidas en círculo alrededor de la esfera,
+   igual a la imagen de referencia (sin flores, sin puntajes — solo palabras + esfera). */
+const MEANING_POINTS = (() => {
+  const labels = [
+    "Cómo te sentís",
+    "Energía",
+    "Cuerpo",
+    "Hábitos diarios",
+    "Vínculos y comunicación",
+    "Descanso y sueño",
+    "Estado de ánimo",
+    "Lo que viviste hoy",
+  ];
+  const rLabel = 50;   // % radio para las etiquetas de texto
+  const rBump = 46;    // % radio para los "bultos" del borde tipo nube
+  return labels.map((label, i) => {
+    const angle = (Math.PI * 2 * i) / labels.length - Math.PI / 2; // empieza arriba
+    const x = 50 + rLabel * Math.cos(angle);
+    const y = 50 + rLabel * Math.sin(angle);
+    const bx = 50 + rBump * Math.cos(angle);
+    const by = 50 + rBump * Math.sin(angle);
+    const bs = 64 + (i % 3) * 14; // tamaño variable de cada bulto, look orgánico
+    return { label, x, y, bx, by, bs };
+  });
+})();
+
+function eventRow({ icon, title, sub, dot, glow }) {
+  return `<button class="flow-row" data-go="evento">
+    <span class="flow-row__icon flow-row__icon--${glow || "blue"}">${I[icon]}</span>
+    <span class="flow-row__body"><span class="flow-row__title">${title}</span><span class="flow-row__sub">${sub}</span></span>
+    ${dot ? `<span class="row__dot" style="background:${dot}"></span>` : ""}
+  </button>`;
+}
+
+/* ============================================================
+   PANTALLAS — Paciente: Mi Historia (P3)
+   ============================================================ */
+ROUTES.historia = () => `
+  ${topbar({ title: "Mi Historia", left:`<span style="width:40px"></span>`,
+    right: `<span class="flex gap-8"><button class="iconbtn" data-toast="Buscar en tu historia" aria-label="Buscar">${I.search}</button><button class="iconbtn" data-tut="open" aria-label="Ayuda">${I.sparkle}</button></span>` })}
+  <div class="content" style="padding-top:0">
+    <div class="chips mb-16">
+      <button class="chip is-active">Todo</button><button class="chip">Notas</button>
+      <button class="chip">Consultas</button><button class="chip">Estudios</button><button class="chip">Documentos</button>
+    </div>
+    ${MED_HISTORY.map(g => `
+      <h2 class="section-title">${g.day}</h2>
+      <div class="list-card mb-16">
+        ${g.items.map(it => `<button class="row" data-go="evento" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit">
+          <span class="row__icon"><span class="row__icon-bg blob--blue"></span>${I[it.icon]}</span>
+          <div class="row__body"><div class="row__title">${it.title}</div><div class="row__sub">${it.type} · ${it.date}</div></div>
+          <span class="row__dot" style="background:${it.dot}"></span>
+        </button>`).join("")}
+      </div>`).join("")}
+  </div>`;
+
+ROUTES.evento = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="historia" aria-label="Volver">${I.back}</button>`, title:"Detalle",
+    right:`<button class="iconbtn" data-toast="Más opciones del registro" aria-label="Más">${I.dots}</button>` })}
+  <div class="content" style="padding-top:0">
+    <h1 class="h2 mb-8">Consulta con Dra. Sofía Laguarda</h1>
+    <p class="muted mb-16">28 de mayo, 11:30 hs · Clínica del Foro</p>
+    <div class="card mb-12"><h3 class="h3 mb-8">Descripción</h3>
+      <p class="lead" style="color:var(--text)">Control de seguimiento. Se conversó sobre estrategias para manejar la ansiedad en situaciones sociales.</p></div>
+    <div class="card mb-12"><h3 class="h3 mb-12">Audio y transcripción</h3>
+      ${audioRow({title:"Nota de la consulta", dur:"01:12", date:"28 may"})}
+      <p class="lead mt-12" style="color:var(--text)">"Hablamos sobre herramientas de respiración para los momentos de ansiedad..."</p></div>
+    <div class="card mb-16"><h3 class="h3 mb-8">Personas con acceso</h3>
+      <div class="flex items-center gap-8 mt-8">${avatar("SL","blue")}<div><div class="row__title">Dra. Sofía Laguarda</div><div class="row__sub">Puede ver y editar</div></div></div></div>
+    <div class="flex gap-8">
+      <button class="btn btn--outline" data-toast="Edición guardada">Editar</button>
+      <button class="btn btn--outline" data-go="compartido">Compartir</button>
+    </div>
+  </div>`;
+
+function avatar(initials, color, lg) {
+  return `<span class="avatar ${lg ? "avatar--lg" : ""}">${blobBg(color)}<span>${initials}</span></span>`;
+}
+function audioRow({ title, dur, date }) {
+  const bars = Array.from({length:32}, () => `<span style="height:${6+Math.random()*20}px"></span>`).join("");
+  return `<div class="audio-row">
+    <button class="audio-play" data-toast="Reproduciendo: ${title}" aria-label="Reproducir ${title}">${I.play}</button>
+    <div class="row__body"><div class="row__title">${title}</div><div class="audio-wave" aria-hidden="true">${bars}</div></div>
+    <div class="row__meta">${dur}<br>${date}</div>
+  </div>`;
+}
+
+/* ============================================================
+   PANTALLAS — Paciente: Medicaciones / Documentos / Consultas / Resumen (P4)
+   ============================================================ */
+ROUTES.medicaciones = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="historia" aria-label="Volver">${I.back}</button>`, title:"Medicaciones" })}
+  <div class="content" style="padding-top:0">
+    <div class="chips mb-16"><button class="chip is-active">Actuales</button><button class="chip">Anteriores</button></div>
+    <div class="card mb-12"><div class="row__title">Sertralina 50 mg</div><div class="row__sub">1 comprimido por la mañana · Desde 10 abr 2024</div></div>
+    <div class="card mb-12"><div class="row__title">Omeprazol 20 mg</div><div class="row__sub">1 comprimido en ayunas · Desde 2 may 2024</div></div>
+    <div class="card mb-16"><div class="row__title">Ibuprofeno 400 mg</div><div class="row__sub">Según necesidad</div></div>
+    <div class="card" style="background:var(--surface-2)"><div class="row__title">Olvidos registrados</div><div class="row__sub">2 olvidos esta semana</div></div>
+  </div>`;
+
+ROUTES.documentos = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="historia" aria-label="Volver">${I.back}</button>`, title:"Documentos",
+    right:`<button class="iconbtn" data-toast="Buscar documentos" aria-label="Buscar">${I.search}</button>` })}
+  <div class="content" style="padding-top:0">
+    <div class="chips mb-16">
+      <button class="chip is-active">Todos</button><button class="chip">Estudios</button><button class="chip">Imágenes</button>
+      <button class="chip">Informes</button><button class="chip">Certificados</button><button class="chip">Otros</button>
+    </div>
+    <div class="list-card">
+      ${docRow({title:"Análisis de sangre", meta:"12 mayo 2024 · Hospital Italiano", color:"blue"})}
+      ${docRow({title:"Rx de tórax", meta:"03 mayo 2024 · Diagnóstico Maipú", color:"lilac"})}
+      ${docRow({title:"Informe de consulta", meta:"28 abr 2024 · Dra. Laguarda", color:"butter"})}
+      ${docRow({title:"Receta", meta:"20 abr 2024 · Dra. Laguarda", color:"peach"})}
+    </div>
+  </div>`;
+
+function docRow({ title, meta, color }) {
+  return `<button class="row" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit" data-toast="Abriendo: ${title}">
+    <span class="row__icon"><span class="row__icon-bg blob--${color}"></span>${I.doc}</span>
+    <div class="row__body"><div class="row__title">${title}</div><div class="row__sub">${meta}</div></div>
+    ${I.chevron}
+  </button>`;
+}
+
+ROUTES.consultas = () => {
+  const days = [];
+  for (let i = 28; i >= 23; i--) days.push(i); // dows row top placeholders handled below
+  return `
+  ${topbar({ left:`<button class="iconbtn" data-go="historia" aria-label="Volver">${I.back}</button>`, title:"Consultas",
+    right:`<button class="iconbtn" data-toast="Agendar nueva consulta" aria-label="Agendar">${I.calendar}</button>` })}
+  <div class="content" style="padding-top:0">
+    <div class="cal mb-16">
+      <div class="cal__head"><span class="h3">Mayo 2024</span>${I.chevron}</div>
+      <div class="cal__grid">
+        ${["L","M","M","J","V","S","D"].map(d=>`<span class="cal__dow">${d}</span>`).join("")}
+        ${calDays()}
+      </div>
+    </div>
+    <button class="card" style="width:100%;text-align:left;border:none;cursor:pointer" data-go="evento">
+      <div class="flex items-center gap-12">
+        <div style="text-align:center"><div class="muted" style="font-size:12px">MAY</div><div class="h2">28</div></div>
+        <div><div class="row__title">11:30 hs · Dra. Sofía Laguarda</div><div class="row__sub">Clínica del Foro</div></div>
+      </div>
+      <div class="minimap"><span class="minimap__pin">${I.calendar}</span></div>
+    </button>
+  </div>`;
+};
+
+function calDays() {
+  let out = "";
+  for (let d = 1; d <= 31; d++) {
+    let cls = "cal__day";
+    if (d === 28) cls += " is-selected";
+    else if ([12, 30].includes(d)) cls += " is-mark";
+    out += `<span class="${cls}">${d}</span>`;
+  }
+  return out;
+}
+
+ROUTES.resumen = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="historia" aria-label="Volver">${I.back}</button>`, title:"Resumen para consulta" })}
+  <div class="content" style="padding-top:0">
+    <div class="field"><label>Rango</label>
+      <button class="setting-row" style="width:100%;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);border:none;cursor:pointer;text-align:left;font-family:inherit" data-toast="Elegir rango de fechas"><span class="setting-row__label">Últimos 30 días</span>${I.chevron}</button></div>
+    <h2 class="section-title mt-16">Incluir</h2>
+    <div class="list-card mb-16">
+      ${checkRow("Medicaciones", true)}${checkRow("Estudios", true)}${checkRow("Consultas", true)}
+      ${checkRow("Audios y notas", true)}${checkRow("Síntomas mencionados", false)}${checkRow("Preguntas pendientes", true)}
+    </div>
+    <button class="btn btn--primary" data-toast="Resumen generado">Generar resumen</button>
+    <p class="disclaimer">Este resumen organiza información registrada por el usuario y no constituye diagnóstico ni recomendación médica.</p>
+  </div>`;
+
+function checkRow(label, checked) {
+  return `<div class="check-row">
+    <button class="check-box ${checked ? "is-checked" : ""}" data-check role="checkbox" aria-checked="${checked}" aria-label="${label}">${checked ? I.check : ""}</button>
+    <span class="check-label">${label}</span>
+  </div>`;
+}
+
+/* ============================================================
+   PANTALLAS — Paciente: Compartido / Explorar (P5)
+   ============================================================ */
+ROUTES.compartido = () => `
+  ${topbar({ title:"Compartido", left:`<span style="width:40px"></span>`,
+    right:`<button class="iconbtn" data-sheet="invite" aria-label="Invitar">${I.plus}</button>` })}
+  <div class="content" style="padding-top:0">
+    <div class="chips mb-16"><button class="chip is-active">Personas</button><button class="chip">Profesionales</button></div>
+    <div class="list-card mb-16">
+      ${permRow("SL","Dra. Sofía Laguarda","blue","Puede ver y editar")}
+      ${permRow("RT","Dr. Ramiro Torres","butter","Puede ver")}
+      ${permRow("PF","Paula Fernández","lilac","Puede ver")}
+    </div>
+    <button class="btn btn--outline" data-go="explorar">Explorar servicios cerca tuyo ${I.arrow}</button>
+  </div>`;
+
+function permRow(initials, name, color, perm) {
+  return `<button class="row" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit" data-toast="Gestionar acceso de ${name}">
+    ${avatar(initials, color)}
+    <div class="row__body"><div class="row__title">${name}</div></div>
+    <span class="perm">${perm}</span>
+  </button>`;
+}
+
+ROUTES.explorar = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="compartido" aria-label="Volver">${I.back}</button>`, title:"Explorar",
+    right:`<button class="iconbtn" data-toast="Buscar servicios" aria-label="Buscar">${I.search}</button>` })}
+  <div class="content" style="padding-top:0">
+    <div class="flex items-center justify-between mb-16">
+      <span class="muted" style="font-size:14px">Cerca tuyo · Palermo</span>
+      <button class="link link--brand" data-toast="Elegir otra ubicación">Cambiar</button>
+    </div>
+    <div class="explore-grid">
+      ${exploreCard("Farmacia del Faro","Envíos a domicilio","15% OFF","images/farmacia.png")}
+      ${exploreCard("NutriBien","Alimentación especial","10% OFF","images/nutricion.png")}
+      ${exploreCard("Centro de Rehabilitación","Kinesiología","","images/rehabilitacion.png")}
+      ${exploreCard("Apoyo Psicológico","Sesiones online","","images/psicologia.png")}
+      ${exploreCard("Laboratorio Central","Análisis a domicilio","","images/laboratorio.png")}
+      ${exploreCard("Cuidado en Casa","Acompañamiento","","images/cuidado.png")}
+    </div>
+  </div>`;
+
+function exploreCard(name, detail, perk, img) {
+  return `<button class="explore-card" style="text-align:left" data-toast="Abriendo ${name}">
+    <img class="explore-card__img" src="${img}" alt="${name}" loading="lazy">
+    <div class="explore-card__body">
+      <div class="explore-card__name">${name}</div>
+      <div class="explore-card__detail">${detail}</div>
+      ${perk ? `<div class="explore-card__perk">${perk}</div>` : ""}
+    </div>
+  </button>`;
+}
+
+/* ============================================================
+   PANTALLAS — Más (P7)
+   ============================================================ */
+ROUTES.mas = () => `
+  ${aurora([{c:"blue",s:200,x:"-30px",y:"140px"},{c:"butter",s:150,x:"55%",y:"60px"},{c:"lilac",s:160,x:"30%",y:"50%"}])}
+  <div class="content">
+    <h1 class="h1">Más</h1>
+    <div class="flex items-center justify-between mt-20 mb-8">
+      <div><h2 class="h2">Hola, Martina</h2><p class="lead">Tu bienestar, tu información, tu decisión.</p></div>
+      ${avatar("M","blue","lg")}
+    </div>
+    <button class="btn btn--outline mt-16" data-go="masOpciones">Ver opciones ${I.arrow}</button>
+  </div>`;
+
+ROUTES.masOpciones = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="mas" aria-label="Volver">${I.back}</button>`, title:"Más" })}
+  <div class="content" style="padding-top:0">
+    <div class="opt-grid mb-16">
+      ${optCard("Configuración","gear","blue","configuracion")}
+      ${optCard("Privacidad","lock","lilac","privacidad")}
+      ${optCard("Seguridad","shield","butter",null,"Configuración de seguridad")}
+      ${optCard("Consentimientos","hand","peach",null,"Tus consentimientos")}
+      ${optCard("Exportar datos","download","blue","exportar")}
+      ${optCard("Historial de accesos","clock","lilac","historial")}
+    </div>
+    <button class="opt-card opt-card--danger" style="width:100%;background:var(--danger-bg)" data-toast="Para eliminar tu cuenta, confirmá por email">
+      <span class="opt-card__icon">${I.trash}</span>
+      <span class="opt-card__label">Eliminar cuenta</span>
+    </button>
+  </div>`;
+
+function optCard(label, icon, color, route, toast) {
+  return `<button class="opt-card" ${route ? `data-go="${route}"` : ""} ${toast ? `data-toast="${toast}"` : ""}>
+    <span class="opt-card__blob blob--${color}"></span>
+    <span class="opt-card__icon">${I[icon]}</span>
+    <span class="opt-card__label">${label}</span>
+  </button>`;
+}
+
+ROUTES.configuracion = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="masOpciones" aria-label="Volver">${I.back}</button>`, title:"Configuración" })}
+  <div class="content" style="padding-top:0">
+    <div class="setting-group"><h2 class="section-title">Cuenta</h2>
+      <div class="setting-list">
+        ${settingRow({icon:"user", label:"Datos personales", chevron:true, toast:"Editar datos personales"})}
+        ${settingRow({icon:"key", label:"Cambiar contraseña", chevron:true, toast:"Cambiar contraseña"})}
+      </div></div>
+    <div class="setting-group"><h2 class="section-title">Notificaciones</h2>
+      <div class="setting-list">
+        ${settingRow({icon:"bell", label:"Recordatorios", toggle:true, on:true})}
+        ${settingRow({icon:"sparkle", label:"Novedades y consejos", toggle:true, on:true})}
+        ${settingRow({icon:"doc", label:"Emails", toggle:true, on:false})}
+      </div></div>
+    <div class="setting-group"><h2 class="section-title">Preferencias</h2>
+      <div class="setting-list">
+        ${settingRow({icon:"moon", label:"Tema", value:"Claro", chevron:true, toast:"Elegir tema"})}
+        ${settingRow({icon:"share", label:"Idioma", value:"Español", chevron:true, toast:"Elegir idioma"})}
+      </div></div>
+  </div>`;
+
+function settingRow({ icon, label, value, chevron, toggle, on, toast }) {
+  let right = "";
+  if (toggle) right = `<label class="switch"><input type="checkbox" ${on ? "checked" : ""}><span class="switch__track"></span></label>`;
+  else if (value) right = `<span class="setting-row__value">${value}</span>${chevron ? `<span class="chevron">${I.chevron}</span>` : ""}`;
+  else if (chevron) right = `<span class="chevron">${I.chevron}</span>`;
+  const tag = toggle ? "div" : "button";
+  return `<${tag} class="setting-row" ${toggle ? "" : `${toast ? `data-toast="${toast}"` : ""} style="width:100%;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit"`}><span class="setting-row__icon">${I[icon]}</span><span class="setting-row__label">${label}</span>${right}</${tag}>`;
+}
+
+/* ============================================================
+   PANTALLAS — Privacidad / Exportar / Historial (P8)
+   ============================================================ */
+ROUTES.privacidad = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="masOpciones" aria-label="Volver">${I.back}</button>`, title:"Privacidad" })}
+  <div class="halo-screen">
+    <div class="halo halo--lilac">${I.lock}</div>
+    <h1 class="h2 mb-8">Tu información es tuya.</h1>
+    <p class="lead mb-24">Controlá quién puede ver tu historia y cómo se utiliza tu información.</p>
+  </div>
+  <div class="content" style="padding-top:0">
+    <div class="setting-list">
+      ${settingRow({icon:"user", label:"Quién puede ver mi historia", chevron:true, toast:"Gestionar quién puede ver tu historia"})}
+      ${settingRow({icon:"share", label:"Información compartida", chevron:true, toast:"Ver información compartida"})}
+      ${settingRow({icon:"shield", label:"Permisos de dispositivos", chevron:true, toast:"Gestionar permisos de dispositivos"})}
+    </div>
+  </div>`;
+
+ROUTES.exportar = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="masOpciones" aria-label="Volver">${I.back}</button>`, title:"Exportar mis datos" })}
+  <div class="halo-screen">
+    <div class="halo halo--butter">${I.folder}</div>
+    <h1 class="h2 mb-8">Llevá tu información con vos.</h1>
+    <p class="lead mb-24">Podés descargar una copia de tus datos en cualquier momento.</p>
+  </div>
+  <div class="content" style="padding-top:0">
+    <div class="card mb-12"><div class="row__title">Qué incluye</div><div class="row__sub">Historias, notas, audios, documentos y más.</div></div>
+    <div class="card mb-24"><div class="row__title">Formato</div><div class="row__sub">Archivo ZIP.</div></div>
+    <button class="btn btn--primary" data-toast="Te enviaremos un email cuando esté lista">Solicitar exportación</button>
+  </div>`;
+
+ROUTES.historial = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="masOpciones" aria-label="Volver">${I.back}</button>`, title:"Historial de accesos" })}
+  <div class="halo-screen">
+    <div class="halo halo--blue">${I.clock}</div>
+    <h1 class="h2 mb-8">Actividad reciente.</h1>
+    <p class="lead mb-24">Consultá los accesos a tu cuenta y los dispositivos utilizados.</p>
+  </div>
+  <div class="content" style="padding-top:0">
+    <div class="list-card">
+      ${accessRow("Hoy, 08:32","iPhone 14 Pro · Buenos Aires, Argentina", true)}
+      ${accessRow("Ayer, 21:15","Web · Chrome · Buenos Aires, Argentina")}
+      ${accessRow("26 may, 18:40","iPad Air · Buenos Aires, Argentina")}
+    </div>
+  </div>`;
+
+function accessRow(time, device, current) {
+  return `<div class="row">
+    <div class="row__body"><div class="row__title">${time}</div><div class="row__sub">${device}</div></div>
+    ${current ? `<span class="perm">Actual</span>` : ""}
+  </div>`;
+}
+
+/* ============================================================
+   PANTALLAS — Profesional: Panel + persona compartida (P6 / P6b)
+   ============================================================ */
+ROUTES.panel = () => `
+  ${topbar({ left:`<button class="iconbtn" data-go="role" aria-label="Menú">${I.menu}</button>`, title:"",
+    right:`<button class="iconbtn" data-toast="Buscar personas" aria-label="Buscar">${I.search}</button>` })}
+  <div class="content" style="padding-top:0">
+    <h1 class="h1">Panel profesional</h1>
+    <p class="lead mb-24">Personas que eligieron compartir su historia.</p>
+    ${PEOPLE.map(p => `
+      <button class="person-card" data-go="personaResumen" data-person="${p.id}">
+        ${avatar(p.initials, p.color, true)}
+        <div class="person-card__body">
+          <div class="person-card__name">${p.name}</div>
+          <div class="person-card__line">Último registro: ${p.last}</div>
+          ${p.next ? `<div class="person-card__next">Próxima consulta: ${p.next}</div>` : `<div class="person-card__line">Sin próximas consultas</div>`}
+        </div>
+        ${I.chevron}
+      </button>`).join("")}
+  </div>`;
+
+/* Header + tabs comunes de persona compartida */
+function personHeader(active) {
+  const tabs = [
+    ["Resumen","personaResumen"],["Timeline","personaTimeline"],["Audios","personaAudios"],
+    ["Documentos","personaDocs"],["Notas","personaNotas"],
+  ];
+  return `
+    ${topbar({ left:`<button class="iconbtn" data-go="panel" aria-label="Volver">${I.back}</button>`, title:"",
+      right:`<button class="iconbtn" data-toast="Más opciones de la persona" aria-label="Más">${I.dots}</button>` })}
+    <div class="person-header">
+      ${avatar("SL","blue")}
+      <div class="person-header__info"><div class="person-header__name">Sofía Laguarda</div><div class="person-header__sub">Último registro: Hoy, 08:32</div></div>
+    </div>
+    <div class="tabs">${tabs.map(([l,r])=>`<button class="tab ${r===active?"is-active":""}" data-go="${r}">${l}</button>`).join("")}</div>`;
+}
+
+ROUTES.personaResumen = () => `
+  ${personHeader("personaResumen")}
+  <div class="content">
+    <div class="gcard g-blue mb-16">
+      <p style="font-size:12px;color:#2c3e66;font-weight:600">PRÓXIMA CONSULTA</p>
+      <p class="h1 mt-8" style="color:#1c2c52">28 MAY</p>
+      <p class="mt-8" style="color:#3a4a6a;font-size:14px">11:30 hs · Clínica del Foro</p>
+    </div>
+    <h2 class="section-title">Sobre lo compartido</h2>
+    <p class="lead mb-16">Sofía compartió registros sobre su estado emocional, sueño, hábitos y notas personales. Revisá su timeline para ver los detalles.</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-card__num">18</div><div class="stat-card__label">Registros compartidos · últimos 30 días</div></div>
+      <div class="stat-card"><div class="stat-card__label">Tipos de registro</div>
+        <div class="type-icons">${I.wave}${I.mic}${I.doc}${I.pencil}</div></div>
+    </div>
+  </div>`;
+
+ROUTES.personaTimeline = () => `
+  ${personHeader("personaTimeline")}
+  <div class="content">
+    <div class="timeline">
+      ${TIMELINE.map(g => `
+        <div class="tl-day">${g.day}</div>
+        ${g.items.map((it,idx,arr) => `
+          <div class="tl-item">
+            <div class="tl-rail">
+              <span class="tl-time">${it.time}</span>
+              <span class="tl-node">${I[it.icon]}</span>
+              ${idx < arr.length-1 ? `<span class="tl-line"></span>` : ""}
+            </div>
+            <div class="tl-card">
+              <span class="tl-card__blob blob--${it.blob}"></span>
+              <div class="tl-card__type">${it.type}</div>
+              <div class="tl-card__text">${it.text}</div>
+            </div>
+          </div>`).join("")}
+      `).join("")}
+    </div>
+  </div>`;
+
+ROUTES.personaAudios = () => `
+  ${personHeader("personaAudios")}
+  <div class="content">
+    <h2 class="h3 mb-8">Audios compartidos</h2>
+    <p class="lead mb-16">Grabaciones, notas de voz y reflexiones.</p>
+    <div class="list-card">${AUDIOS.map(a => audioRow(a)).join("")}</div>
+  </div>`;
+
+ROUTES.personaDocs = () => `
+  ${personHeader("personaDocs")}
+  <div class="content">
+    <h2 class="h3 mb-8">Documentos compartidos</h2>
+    <p class="lead mb-16">Archivos que Sofía eligió compartir.</p>
+    <div class="list-card">${DOCS.map(d => docRow({title:d.title, meta:d.meta, color:d.color})).join("")}</div>
+  </div>`;
+
+ROUTES.personaNotas = () => `
+  ${personHeader("personaNotas")}
+  <div class="content">
+    <h2 class="h3 mb-8">Notas del profesional</h2>
+    <p class="lead mb-16">Espacio privado para tus notas sobre el proceso de Sofía.</p>
+    <div class="card mb-12"><div class="row__sub mb-8">Nota · 27 may</div>
+      <p class="lead" style="color:var(--text)">Sofía está trabajando muy bien en reconocer sus emociones y pedir ayuda cuando la necesita.</p></div>
+    <div class="card mb-16"><div class="row__sub mb-8">Nota · 20 may</div>
+      <p class="lead" style="color:var(--text)">Hablamos sobre herramientas para manejar la ansiedad en situaciones sociales.</p></div>
+    <button class="btn btn--outline" data-toast="Nota guardada">${I.plus} Nueva nota</button>
+  </div>`;
+
+/* ============================================================
+   Bottom tab bar
+   ============================================================ */
+function renderTabbar(route) {
+  const activeTab = TAB_SCREENS[route];
+  if (!activeTab) { app.tabbar.hidden = true; return; }
+  app.tabbar.hidden = false;
+  const items = [
+    { id: "inicio", label: "Inicio", icon: "home", route: "home" },
+    { id: "historia", label: "Historia", icon: "history", route: "historia" },
+    { id: "add", label: "", icon: "plus", add: true },
+    { id: "compartido", label: "Compartido", icon: "share", route: "compartido" },
+    { id: "mas", label: "Más", icon: "more", route: "mas" },
+  ];
+  app.tabbar.innerHTML = items.map(it => {
+    if (it.add) return `<button class="tabbar__item" data-sheet="register"><span class="tabbar__add">${I.plus}</span></button>`;
+    const on = it.id === activeTab;
+    return `<button class="tabbar__item ${on ? "is-active" : ""}" data-go="${it.route}">${I[it.icon]}<span>${it.label}</span></button>`;
+  }).join("");
+}
+
+/* ============================================================
+   Modales / Bottom sheets / Tutoriales (P2 registro + P9 tutoriales)
+   ============================================================ */
+const REG_OPTIONS = [
+  { label: "Contar algo que pasó", icon: "mic", color: "blue", kind: "audio" },
+  { label: "Escribir una nota", icon: "pencil", color: "blue", kind: "nota" },
+  { label: "Agregar o cambiar medicación", icon: "pills", color: "coral", kind: "medicacion" },
+  { label: "Subir estudio o archivo", icon: "doc", color: "green", kind: "archivo" },
+  { label: "Guardar consulta o turno", icon: "calendar", color: "blue", kind: "consulta" },
+  { label: "Registrar algo que sentís", icon: "heart", color: "red", kind: "sentimiento" },
+  { label: "Subir foto", icon: "camera", color: "blue", kind: "foto" },
+  { label: "Guardar evento importante", icon: "bookmark", color: "blue", kind: "evento" },
+];
+
+function openSheet(type) {
+  let body = "";
+  if (type === "register") {
+    body = `
+      <div class="sheet__head"><span class="sheet__title">¿Qué querés registrar?</span>
+        <button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button></div>
+      <div class="reg-grid">
+        ${REG_OPTIONS.map(o => `<button class="reg-card" data-flow="${o.kind}">
+          <span class="reg-card__icon reg-icon--${o.color}">${I[o.icon]}</span>
+          <span class="reg-card__label">${o.label}</span></button>`).join("")}
+      </div>`;
+  } else if (type === "invite") {
+    body = `
+      <div class="sheet__head"><span class="sheet__title">Invitar a alguien</span>
+        <button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button></div>
+      <p class="lead mb-16">Elegís qué compartís, con quién y por cuánto tiempo. Podés revocar el acceso cuando quieras.</p>
+      <div class="field"><label>Email o teléfono</label><input class="input" placeholder="persona@email.com"></div>
+      <button class="btn btn--primary" data-close>Enviar invitación</button>`;
+  }
+  app.overlay.className = "overlay";
+  app.overlay.innerHTML = `<div class="sheet ${type === "register" ? "sheet--register" : ""}">${body}</div>`;
+  app.overlay.hidden = false;
+}
+
+/* Flujo de audio como pantalla completa (overlay) */
+function openAudioFlow(stage = "recording") {
+  let body;
+  const bars = (anim) => Array.from({length:28}, () =>
+    `<span style="height:${anim?20:8+Math.random()*22}px"></span>`).join("");
+  if (stage === "recording") {
+    body = `
+      <header class="topbar"><button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button><div></div><div style="width:40px"></div></header>
+      <div class="recorder">
+        <h1 class="h2 mb-8">Contá lo que pasó</h1>
+        <p class="muted">Estamos escuchando…</p>
+        <div class="recorder__timer">00:28</div>
+        <div class="waveform" aria-hidden="true">${bars(true)}</div>
+        <button class="record-btn" data-audio="review" aria-label="Detener">${I.stop}</button>
+      </div>`;
+  } else if (stage === "review") {
+    body = `
+      <header class="topbar"><button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button><div></div><div style="width:40px"></div></header>
+      <div class="recorder">
+        <h1 class="h2 mb-24">¿Está bien así?</h1>
+        <p class="muted mb-16">00:28 · Hoy, 08:32</p>
+        <div class="waveform wave-static mb-24" aria-hidden="true">${bars(false)}</div>
+        <button class="play-btn mb-24" data-toast="Reproduciendo grabación" aria-label="Reproducir">${I.play}</button>
+        <div class="stack" style="width:100%">
+          <button class="btn btn--primary" data-audio="saved">Sí, guardar</button>
+          <button class="btn btn--ghost" data-audio="recording">Regrabar</button>
+        </div>
+      </div>`;
+  } else {
+    body = `
+      <header class="topbar"><button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button><div></div><div style="width:40px"></div></header>
+      <div class="content">
+        <h1 class="h2 mb-16">Guardado en Mi Historia</h1>
+        <div class="card mb-12"><h3 class="h3 mb-8">Transcripción</h3>
+          <p class="lead" style="color:var(--text)">Hoy me costó arrancar pero respiré un rato y pude volver a centrarme...</p></div>
+        <div class="card mb-16"><h3 class="h3 mb-8">Resumen</h3>
+          <p class="lead" style="color:var(--text)">Registro de estado emocional · respiración consciente.</p></div>
+        <button class="btn btn--primary" data-close data-go="historia">Ver en Mi Historia</button>
+      </div>`;
+  }
+  app.overlay.className = "overlay";
+  app.overlay.innerHTML = `<div class="sheet" style="border-radius:0;height:100%;width:390px;max-width:100%;animation:none;padding:0;display:flex;flex-direction:column">${body}</div>`;
+  app.overlay.hidden = false;
+}
+
+/* ============================================================
+   Flujo rápido de registro: formulario simple → guardado → confirmación
+   Cubre los 7 tipos del modal "¿Qué querés registrar?" que no son audio,
+   todos terminan en Mi Historia, igual que el flujo de audio ya existente.
+   ============================================================ */
+const QUICK_FLOWS = {
+  nota: {
+    title: "Escribir una nota",
+    icon: "pencil",
+    field: `<div class="field"><label>¿Qué querés anotar?</label><textarea class="input" rows="5" placeholder="Escribí lo que quieras recordar..." style="resize:none;font-family:inherit"></textarea></div>`,
+    savedTitle: "Nota guardada en Mi Historia",
+    savedBody: "Registro de nota personal · hoy.",
+  },
+  medicacion: {
+    title: "Agregar o cambiar medicación",
+    icon: "pills",
+    field: `
+      <div class="field"><label>Medicación</label><input class="input" placeholder="Ej: Sertralina 50 mg"></div>
+      <div class="field"><label>Frecuencia</label><input class="input" placeholder="Ej: 1 comprimido por la mañana"></div>`,
+    savedTitle: "Medicación guardada",
+    savedBody: "Se agregó a tu lista de medicaciones actuales.",
+  },
+  archivo: {
+    title: "Subir estudio o archivo",
+    icon: "doc",
+    field: `<button class="upload-zone" type="button" data-toast="Elegí un archivo de tu dispositivo">${I.doc}<span>Tocá para elegir un archivo</span></button>
+      <div class="field mt-16"><label>Descripción</label><input class="input" placeholder="Ej: Análisis de sangre"></div>`,
+    savedTitle: "Archivo guardado en Documentos",
+    savedBody: "Podés verlo cuando quieras en Mi Historia → Documentos.",
+  },
+  consulta: {
+    title: "Guardar consulta o turno",
+    icon: "calendar",
+    field: `
+      <div class="field"><label>Profesional</label><input class="input" placeholder="Ej: Dra. Sofía Laguarda"></div>
+      <div class="field"><label>Fecha y hora</label><input class="input" type="datetime-local"></div>`,
+    savedTitle: "Consulta guardada",
+    savedBody: "La vas a ver en Mi Historia → Consultas.",
+  },
+  sentimiento: {
+    title: "Registrar algo que sentís",
+    icon: "heart",
+    field: `<div class="field"><label>¿Cómo te sentís ahora?</label><textarea class="input" rows="4" placeholder="Contá lo que sentís, sin juicios." style="resize:none;font-family:inherit"></textarea></div>`,
+    savedTitle: "Estado emocional registrado",
+    savedBody: "Gracias por tomarte un momento para ponerlo en palabras.",
+  },
+  foto: {
+    title: "Subir foto",
+    icon: "camera",
+    field: `<button class="upload-zone" type="button" data-toast="Elegí una foto de tu dispositivo">${I.camera}<span>Tocá para elegir una foto</span></button>`,
+    savedTitle: "Foto guardada",
+    savedBody: "La vas a encontrar en Mi Historia → Documentos.",
+  },
+  evento: {
+    title: "Guardar evento importante",
+    icon: "bookmark",
+    field: `<div class="field"><label>¿Qué pasó?</label><input class="input" placeholder="Ej: Empecé un nuevo tratamiento"></div>`,
+    savedTitle: "Evento guardado en Mi Historia",
+    savedBody: "Vas a poder volver a verlo cuando quieras.",
+  },
+};
+
+function openQuickFlow(kind, stage = "form") {
+  const cfg = QUICK_FLOWS[kind];
+  if (!cfg) return;
+  let body;
+  if (stage === "form") {
+    body = `
+      <header class="topbar"><button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button><div></div><div style="width:40px"></div></header>
+      <div class="content">
+        <span class="halo halo--blue mb-16" style="width:64px;height:64px">${I[cfg.icon]}</span>
+        <h1 class="h2 mb-16">${cfg.title}</h1>
+        ${cfg.field}
+        <button class="btn btn--primary mt-16" data-quick-save="${kind}">Guardar</button>
+      </div>`;
+  } else {
+    body = `
+      <header class="topbar"><button class="iconbtn" data-close aria-label="Cerrar">${I.close}</button><div></div><div style="width:40px"></div></header>
+      <div class="content">
+        <h1 class="h2 mb-16">${cfg.savedTitle}</h1>
+        <div class="card mb-16"><p class="lead" style="color:var(--text)">${cfg.savedBody}</p></div>
+        <button class="btn btn--primary" data-close data-go="historia">Ver en Mi Historia</button>
+      </div>`;
+  }
+  app.overlay.className = "overlay";
+  app.overlay.innerHTML = `<div class="sheet" style="border-radius:0;height:100%;width:390px;max-width:100%;animation:none;padding:0;display:flex;flex-direction:column">${body}</div>`;
+  app.overlay.hidden = false;
+}
+
+/* Tutoriales contextuales (P9) — componente reutilizable */
+const TUTORIALS = [
+  { halo: "h-blue", icon: "sparkle", title: "Esta es tu timeline.", text: "Acá vas viendo todo lo que Sofía eligió compartir, en orden cronológico." },
+  { halo: "h-butter", icon: "mic", title: "Escuchá sus audios.", text: "Reflexiones, respiraciones o notas de voz que Sofía compartió con vos." },
+  { halo: "h-green", icon: "doc", title: "Tus notas son privadas.", text: "Este espacio es solo tuyo para acompañar, escribir y registrar lo que quieras." },
+];
+
+function openTutorial(step = 0) {
+  app.tutStep = step;
+  const t = TUTORIALS[step];
+  app.overlay.className = "overlay overlay--center";
+  app.overlay.innerHTML = `
+    <div class="tut">
+      <span class="tut__icon ${t.halo}">${I[t.icon]}</span>
+      <h2 class="tut__title">${t.title}</h2>
+      <p class="tut__text">${t.text}</p>
+      <button class="link link--brand" data-tut-next>Entendido</button>
+      <div class="tut__dots">${TUTORIALS.map((_,i)=>`<span class="tut__dot ${i===step?"is-active":""}"></span>`).join("")}</div>
+    </div>`;
+  app.overlay.hidden = false;
+}
+
+function closeOverlay() {
+  app.overlay.hidden = true;
+  app.overlay.innerHTML = "";
+}
+
+/* Toast con estética de energía: feedback real al tocar acciones que no
+   necesitan una pantalla propia (ej. "Solicitar exportación", "Nueva nota"). */
+let toastTimer = null;
+function showEnergyToast(message) {
+  let el = document.getElementById("energy-toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "energy-toast";
+    el.className = "energy-toast";
+    document.body.appendChild(el);
+  }
+  el.innerHTML = `<span class="energy-toast__glow"></span><span class="energy-toast__text">${message}</span>`;
+  el.classList.remove("is-visible");
+  // reiniciar animación si se toca varias veces seguidas
+  void el.offsetWidth;
+  el.classList.add("is-visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("is-visible"), 2200);
+}
+
+/* ============================================================
+   Binding de eventos
+   ============================================================ */
+function bindScreen() {
+  // navegación entre pantallas
+  app.screen.querySelectorAll("[data-go]").forEach(el =>
+    el.addEventListener("click", () => go(el.dataset.go)));
+  // abrir sheets
+  app.screen.querySelectorAll("[data-sheet]").forEach(el =>
+    el.addEventListener("click", () => openSheet(el.dataset.sheet)));
+  // tutoriales
+  app.screen.querySelectorAll("[data-tut]").forEach(el =>
+    el.addEventListener("click", () => openTutorial(0)));
+  // toggle ojo de contraseña
+  app.screen.querySelectorAll("[data-eye]").forEach(el =>
+    el.addEventListener("click", () => {
+      const inp = document.getElementById(el.dataset.eye);
+      inp.type = inp.type === "password" ? "text" : "password";
+    }));
+  // checkboxes del resumen
+  app.screen.querySelectorAll("[data-check]").forEach(el =>
+    el.addEventListener("click", () => {
+      const on = el.classList.toggle("is-checked");
+      el.setAttribute("aria-checked", on);
+      el.innerHTML = on ? I.check : "";
+    }));
+  // acciones sin pantalla propia: dan feedback real con un toast de energía
+  app.screen.querySelectorAll("[data-toast]").forEach(el =>
+    el.addEventListener("click", () => showEnergyToast(el.dataset.toast)));
+  // chips/filtros: alternan estado activo dentro de su propio grupo
+  app.screen.querySelectorAll(".chips").forEach(group => {
+    group.querySelectorAll(".chip").forEach(chip =>
+      chip.addEventListener("click", () => {
+        group.querySelectorAll(".chip").forEach(c => c.classList.remove("is-active"));
+        chip.classList.add("is-active");
+      }));
+  });
+  // días del calendario: selección visual
+  app.screen.querySelectorAll(".cal__grid").forEach(grid => {
+    grid.querySelectorAll(".cal__day").forEach(day =>
+      day.addEventListener("click", () => {
+        grid.querySelectorAll(".cal__day").forEach(d => d.classList.remove("is-selected"));
+        day.classList.add("is-selected");
+      }));
+  });
+}
+
+/* Delegación en tabbar y overlay */
+app.tabbar.addEventListener("click", (e) => {
+  const goBtn = e.target.closest("[data-go]");
+  const sheetBtn = e.target.closest("[data-sheet]");
+  if (goBtn) go(goBtn.dataset.go);
+  else if (sheetBtn) openSheet(sheetBtn.dataset.sheet);
+});
+
+app.overlay.addEventListener("click", (e) => {
+  if (e.target === app.overlay || e.target.closest("[data-close]")) {
+    const goAfter = e.target.closest("[data-go]");
+    closeOverlay();
+    if (goAfter) go(goAfter.dataset.go);
+    return;
+  }
+  const flow = e.target.closest("[data-flow]");
+  if (flow) {
+    const kind = flow.dataset.flow;
+    if (kind === "audio") openAudioFlow("recording");
+    else openQuickFlow(kind);
+    return;
+  }
+  const quick = e.target.closest("[data-quick-save]");
+  if (quick) { openQuickFlow(quick.dataset.quickSave, "saved"); return; }
+  const audio = e.target.closest("[data-audio]");
+  if (audio) {
+    if (audio.dataset.audio === "saved") openAudioFlow("saved");
+    else openAudioFlow(audio.dataset.audio);
+    return;
+  }
+  const tutNext = e.target.closest("[data-tut-next]");
+  if (tutNext) {
+    const next = app.tutStep + 1;
+    if (next < TUTORIALS.length) openTutorial(next);
+    else closeOverlay();
+    return;
+  }
+  const toast = e.target.closest("[data-toast]");
+  if (toast) showEnergyToast(toast.dataset.toast);
+});
+
+/* ============================================================
+   Navegador de demo (lista lateral)
+   ============================================================ */
+const NAV_GROUPS = [
+  { group: "Onboarding", items: [["Bienvenida","welcome"],["Elegir rol","role"],["Crear cuenta","register"],["Iniciar sesión","login"]] },
+  { group: "Paciente", items: [["Home Hoy","home"],["Mi Historia","historia"],["Detalle evento","evento"],["Medicaciones","medicaciones"],["Documentos","documentos"],["Consultas","consultas"],["Resumen consulta","resumen"],["Compartido","compartido"],["Explorar","explorar"]] },
+  { group: "Más / Datos", items: [["Más","mas"],["Opciones","masOpciones"],["Configuración","configuracion"],["Privacidad","privacidad"],["Exportar datos","exportar"],["Historial accesos","historial"]] },
+  { group: "Profesional", items: [["Panel profesional","panel"],["Persona · Resumen","personaResumen"],["Persona · Timeline","personaTimeline"],["Persona · Audios","personaAudios"],["Persona · Documentos","personaDocs"],["Persona · Notas","personaNotas"]] },
+];
+
+function buildNavigator() {
+  app.navList.innerHTML = NAV_GROUPS.map(g =>
+    `<div class="nav-group">${g.group}</div>` +
+    g.items.map(([label, route]) => `<button class="nav-link" data-nav="${route}">${label}</button>`).join("")
+  ).join("");
+  app.navList.querySelectorAll("[data-nav]").forEach(el =>
+    el.addEventListener("click", () => go(el.dataset.nav)));
+}
+
+function updateNavigator() {
+  app.navList.querySelectorAll("[data-nav]").forEach(el =>
+    el.classList.toggle("is-active", el.dataset.nav === app.current));
+}
+
+/* ============================================================
+   Init
+   ============================================================ */
+buildNavigator();
+go("welcome");
+
+/* ============================================================
+   Campo de energía global — "vos sos energía"
+   Mover el dedo o el mouse desparrama estelas de color cálido/frío
+   por toda la app, como en las imágenes de referencia (mano sosteniendo
+   una esfera de luz / siluetas con manchas de calor en movimiento).
+   ============================================================ */
+(function setupEnergyField() {
+  const layer = document.createElement("div");
+  layer.className = "energy-layer";
+  layer.setAttribute("aria-hidden", "true");
+  document.body.appendChild(layer);
+
+  const PALETTE = [
+    "rgba(240,130,107,0.50)",  // coral
+    "rgba(251,230,174,0.55)",  // butter
+    "rgba(220,201,244,0.55)",  // lilac
+    "rgba(179,204,255,0.55)",  // blue
+    "rgba(91,141,239,0.40)",   // brand
+    "rgba(52,199,89,0.30)",    // green
+  ];
+
+  let lastX = null, lastY = null, lastT = 0;
+  let colorCursor = 0;
+  const MIN_DIST = 18;     // distancia mínima entre manchas
+  const MIN_GAP_MS = 30;   // separación mínima en el tiempo
+  const MAX_BLOBS = 60;    // tope de manchas vivas para no sobrecargar
+
+  function spawnBlob(x, y, speed) {
+    if (layer.childElementCount > MAX_BLOBS) {
+      layer.firstElementChild && layer.firstElementChild.remove();
+    }
+    const blob = document.createElement("span");
+    blob.className = "energy-blob";
+    const size = Math.min(150, 46 + speed * 2.2);
+    const color = PALETTE[colorCursor % PALETTE.length];
+    colorCursor++;
+    blob.style.left = x + "px";
+    blob.style.top = y + "px";
+    blob.style.width = size + "px";
+    blob.style.height = size + "px";
+    blob.style.background = `radial-gradient(circle, ${color} 0%, ${color.replace(/[\d.]+\)$/, "0)")} 70%)`;
+    layer.appendChild(blob);
+    blob.addEventListener("animationend", () => blob.remove());
+  }
+
+  function handleMove(x, y) {
+    const now = performance.now();
+    if (lastX !== null) {
+      const dx = x - lastX, dy = y - lastY;
+      const dist = Math.hypot(dx, dy);
+      const dt = Math.max(now - lastT, 1);
+      if (dist > MIN_DIST && dt > MIN_GAP_MS) {
+        spawnBlob(x, y, dist / dt * 16);
+        lastX = x; lastY = y; lastT = now;
+      }
+    } else {
+      spawnBlob(x, y, 4);
+      lastX = x; lastY = y; lastT = now;
+    }
+  }
+
+  window.addEventListener("pointermove", (e) => handleMove(e.clientX, e.clientY), { passive: true });
+  window.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    if (t) handleMove(t.clientX, t.clientY);
+  }, { passive: true });
+  window.addEventListener("pointerdown", (e) => { lastX = null; spawnBlob(e.clientX, e.clientY, 10); });
+})();
